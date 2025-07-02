@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 
 # Django 설정
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')  # 프로젝트 이름 맞게 수정
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
 from code_t.models import Code_T
