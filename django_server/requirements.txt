@@ -19,3 +19,6 @@ openai
 
 # AWS
 boto3
+
+# gunicorn
+gunicorn
