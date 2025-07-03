@@ -1,0 +1,41 @@
+name: CI/CD fastapi_server_chatbot
+
+on:
+  push:
+    paths:
+      - 'fastapi_server_chatbot/**'
+      - '.github/workflows/ci-cd-server-chatbot.yaml'
+    branches: [ feature-FastAPI ]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ RUNPOD.DOCKER_USERNAME }}
+        password: ${{ RUNPOD.DOCKER_PASSWORD }}
+        
+    - name: Chatbot server Build Docker image
+      uses: docker/build-push-action@v4
+      with:
+        push: true
+        tags: ${{ RUNPOD.DOCKER_USERNAME }}/fastapi_server_chatbot:latest
+        context: ./fastapi_server_chatbot
+        file: ./fastapi_server_chatbot/Dockerfile
+
+    - name: Run Tests on Runpod Chatbot server
+      uses: runpod/runpod-test-runner@v1
+      with:
+        image-tag: ${{ RUNPOD.DOCKER_USERNAME }}/fastapi_server_chatbot:latest
+        runpod-api-key: ${{ RUNPOD.RUNPOD_API_KEY }}
+        test-filename: fastapi_server_chatbot/tests.json
+
+    - name: Deploy to Runpod Chatbot server
+      run: |
+        curl 'https://rest.runpod.io/v1/pods/${{ RUNPOD.CHATBOT_ROD_ID }}/reset' \
+              --request POST \
+              --header 'Authorization: Bearer ${{ RUNPOD.RUNPOD_API_KEY }}'
