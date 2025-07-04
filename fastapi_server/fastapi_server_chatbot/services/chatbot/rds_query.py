@@ -3,20 +3,15 @@
 import os
 import pymysql
 from typing import Optional, Dict
+from db.case_db import get_case_db
+import logging
+
+logger = logging.getLogger(__name__)
 
 def get_case_by_id(case_id: int) -> Optional[Dict]:
-    """RDS에서 case_id로 판례 정보 조회"""
-    conn = pymysql.connect(
-        host=os.getenv("MYSQL_HOST"),
-        port=int(os.getenv("MYSQL_PORT", 3306)),
-        user=os.getenv("MYSQL_USER"),
-        password=os.getenv("MYSQL_PWD"),
-        database=os.getenv("MYSQL_DB"),
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
-
+    conn = None
     try:
+        conn = get_case_db()
         with conn.cursor() as cursor:
             query = """
             SELECT case_id, case_num, court_name, case_name, case_at, 
@@ -29,9 +24,12 @@ def get_case_by_id(case_id: int) -> Optional[Dict]:
             cursor.execute(query, (case_id,))
             result = cursor.fetchone()
             return result
-
+    except Exception as e:
+        logger.error(f"Error in get_case_by_id: {str(e)}")
+        raise
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 def search_cases_in_rds(filters: dict) -> list:
     """RDS에서 조건 기반 판례 검색 (핵심 필드만 사용, 한글-DB컬럼 매핑)"""
@@ -52,17 +50,9 @@ def search_cases_in_rds(filters: dict) -> list:
     
     print("🔍 [DEBUG] 정제된 필터:", filters)
 
-    conn = pymysql.connect(
-        host=os.getenv("MYSQL_HOST"),
-        port=int(os.getenv("MYSQL_PORT", 3306)),
-        user=os.getenv("MYSQL_USER"),
-        password=os.getenv("MYSQL_PASSWORD"),
-        database=os.getenv("MYSQL_DB"),
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
-
+    conn = None
     try:
+        conn = get_case_db()
         with conn.cursor() as cursor:
             query = "SELECT case_id FROM `case` WHERE 1=1"
             params = []
@@ -83,25 +73,26 @@ def search_cases_in_rds(filters: dict) -> list:
             result = cursor.fetchall()
             print(f"[SQL DEBUG] 결과 개수: {len(result)}")
             return [str(row["case_id"]) for row in result]
+    except Exception as e:
+        logger.error(f"Error in search_cases_in_rds: {str(e)}")
+        raise
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 def get_unique_column_values(column: str) -> list:
     """RDS에서 특정 컬럼의 유니크 값 리스트 반환"""
-    conn = pymysql.connect(
-        host=os.getenv("MYSQL_HOST"),
-        port=int(os.getenv("MYSQL_PORT", 3306)),
-        user=os.getenv("MYSQL_USER"),
-        password=os.getenv("MYSQL_PASSWORD"),
-        database=os.getenv("MYSQL_DB"),
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
+    conn = None
     try:
+        conn = get_case_db()
         with conn.cursor() as cursor:
             query = f"SELECT DISTINCT `{column}` FROM `case` WHERE `{column}` IS NOT NULL AND `{column}` != ''"
             cursor.execute(query)
             result = cursor.fetchall()
             return [row[column] for row in result if row[column]]
+    except Exception as e:
+        logger.error(f"Error in get_unique_column_values: {str(e)}")
+        raise
     finally:
-        conn.close()
+        if conn:
+            conn.close()
