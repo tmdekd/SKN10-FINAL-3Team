@@ -24,8 +24,7 @@ def get_request_prompt(request):
 ### 참고 사항:
 - ...
 """
-    user_prompt = f"""
-사건 내용: {request.e_description}
+    user_prompt = f"""사건 내용: {request.e_description}
 주장 요약: {request.claim_summary}
 증거자료: {request.event_file}
 """
