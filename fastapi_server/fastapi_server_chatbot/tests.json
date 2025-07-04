@@ -2,7 +2,7 @@
   "test_cases": {
     "case_management": [
       {
-        "name": "서버 테스트1",
+        "name": "서버 테스트12",
         "endpoint": "/",
         "method": "POST",
         "expected_status": 200

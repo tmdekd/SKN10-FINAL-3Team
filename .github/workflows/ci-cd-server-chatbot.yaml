@@ -28,7 +28,7 @@ jobs:
         file: ./fastapi_server/fastapi_server_chatbot/Dockerfile
 
     - name: Run Tests on Runpod Chatbot server
-      uses: runpod/runpod-test-runner@v1
+      uses: runpod/runpod-test-runner@v2.1.0
       with:
         image-tag: ${{ secrets.DOCKER_USERNAME }}/fastapi_server_chatbot:latest
         runpod-api-key: ${{ secrets.RUNPOD_API_KEY }}
