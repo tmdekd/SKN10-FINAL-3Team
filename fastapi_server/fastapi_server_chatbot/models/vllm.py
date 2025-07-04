@@ -36,8 +36,8 @@ def generate_strategy(system_prompt: str, user_prompt: str) -> str:
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}],
-        max_tokens=1024,
-        temperature=0.1
+        max_tokens=2048,
+        temperature=0.0
     )
     strategy = response.choices[0].message.content
     return strategy

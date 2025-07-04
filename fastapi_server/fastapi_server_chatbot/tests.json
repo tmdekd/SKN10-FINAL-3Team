@@ -2,9 +2,9 @@
   "test_cases": {
     "case_management": [
       {
-        "name": "서버 테스트",
+        "name": "서버 테스트1",
         "endpoint": "/",
-        "method": "GET",
+        "method": "POST",
         "expected_status": 200
       }
     ]
