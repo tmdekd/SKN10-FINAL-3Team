@@ -65,7 +65,7 @@
 | 전처리 | HTML 태그 제거, 라벨 인코딩, Stratified Split |
 | 데이터 저장 | JSON → Pandas 구조화 |
 | 추론 API | FastAPI 기반 REST API |
-| 유사 판례 검색 | 벡터 DB (Qdrant) 기반 임베딩 검색 |
+| 유사 판례 검색 | 벡터 DB (FAISS) 기반 임베딩 검색 |
 | 학습 프레임워크 | PyTorch + HuggingFace Transformers |
 | 향후 확장 | RAG 기반 문서 검색 예정 |
 
